@@ -202,7 +202,7 @@ class EmployeeController {
 
                 console.log(`EmployeesItems with employeeId of ${id} couldn't be found`);
             }
-            console.log(result)
+            
             result === 1 ? response.status(200).json({
                 status: true,
                 message: `Account with an ID of ${id} has been deleted`
@@ -225,15 +225,18 @@ class EmployeeController {
 
             let result = await Employee.findByPk(id);
 
-            response.status(200).json({
+            result !== null ? response.status(200).json({
                 status: true,
                 data: result
+            }) : response.status(404).json({
+                status: false,
+                message: `Employee with an ID of ${id} wasn't found`
             });
         } catch(err) {
-            response.status(500).json({
+             response.status(500).json({
                 status: false,
                 error: err
-            });
+            }) 
         }
     }
 
@@ -250,10 +253,13 @@ class EmployeeController {
                 }
             });
 
-            response.status(200).json({
+            result.length !== 0 ? response.status(200).json({
                 status: true,
                 data_count: result.length,
                 data: result
+            }) : response.status(404).json({
+                status: false,
+                message: `Couldn't find what you're looking for with the query of '${request.params.query}'`
             });
         } catch(err) {
             response.status(500).json({

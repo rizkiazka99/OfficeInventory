@@ -1,4 +1,4 @@
-const { Item } = require('../models');
+const { Item, EmployeesItem, sequelize } = require('../models');
 
 class ItemController {
     static async getAllItems(request, response) {
@@ -63,6 +63,169 @@ class ItemController {
                 status: false,
                 error: err
             })
+        }
+    }
+
+    static async update(request, response) {
+        try {
+            const id = +request.params.id;
+            const role = request.userData.role;
+            let { name, stock, image_name, image_type, image_data, CategoryId } = request.body;
+
+            if (role !== 'Admin') {
+                response.status(401).json({
+                    status: false,
+                    message: 'Only Admin(s) can perform this action'
+                });
+            } else {
+                let result;
+
+                if (request.file) {
+                    result = await Item.update({
+                        name, stock, image_name, image_type, image_data, CategoryId
+                    }, {
+                        where: {id}
+                    });
+                } else {
+                    result = await Item.update({
+                        name, 
+                        stock, 
+                        image_name: null, 
+                        image_type: null, 
+                        image_data: null, 
+                        CategoryId
+                    }, {
+                        where: {id}
+                    });
+                }
+
+                result[0] === 1 ? response.status(200).json({
+                    status: true,
+                    message: `Item with an ID of ${id} has been updated`
+                }) : response.status(404).json({
+                    status: false,
+                    message: `Item with an ID of ${id} couldn't be updated or wasn't found`
+                });
+            }
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                error: err
+            });
+        }
+    }
+
+    static async delete(request, response) {
+        try {
+            const id = +request.params.id;
+            const role = request.userData.role;
+
+            if (role !== 'Admin') {
+                response.status(401).json({
+                    status: false,
+                    message: 'Only Admin(s) can perform this action'
+                });
+            } else {
+                let result;
+                let resultJunction;
+                let employeesItems = await EmployeesItem.findAll({
+                    where: {
+                        ItemId: id
+                    }
+                });
+
+                if(employeesItems.length !== 0) {
+                    result = await Item.destroy({
+                        where: {id}
+                    });
+
+                    resultJunction = await EmployeesItem.destroy({
+                        where: {
+                            ItemeId: id
+                        }
+                    });
+
+                    console.log(`EmployeesItems with employeeId of ${id} has also been deleted`);
+                } else {
+                    result = await Item.destroy({
+                        where: {id}
+                    });
+
+                    console.log(`EmployeesItems with employeeId of ${id} couldn't be found`);
+                }
+
+                result === 1 ? response.status(200).json({
+                    status: true,
+                    message: `Item with an ID of ${id} has been deleted`
+                }) : response.status(404).json({
+                    status: false,
+                    message: `Item with an ID of ${id} couldn't be deleted or wasn't found`
+                });
+            }
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                error: err
+            });
+        }
+    }
+
+    static async getById(request, response) {
+        try {
+            const id = +request.params.id;
+            const role = request.userData.role;
+
+            if (role !== 'Admin') {
+                response.status(401).json({
+                    status: false,
+                    message: 'Only Admin(s) can perform this action'
+                });
+            } else {
+                let result = await Item.findByPk(id);
+
+                result !== null ? response.status(200).json({
+                    status: true,
+                    data: result
+                }) : response.status(404).json({
+                    status: false,
+                    message: `Item with an ID of ${id} wasn't found`
+                });
+            }
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                error: err
+            })
+        }
+    }
+
+    static async findByCategory(request, response) {
+
+    }
+
+    static async search(request, response) {
+        try {
+            const query = request.params.query.toLowerCase();
+
+            let result = await Item.findAll({
+                where: {
+                    name: sequelize.where(sequelize.fn('LOWER', sequelize.col('name')), 'LIKE', '%' + query + '%')
+                }
+            });
+
+            result.length !== 0 ? response.status(200).json({
+                status: true,
+                data_count: result.length,
+                data: result
+            }) : response.status(404).json({
+                status: false,
+                message: `Couldn't find what you're looking for with the query of '${request.params.query}'`
+            });
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                error: err
+            });
         }
     }
 }
