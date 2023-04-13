@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Item.belongsToMany(models.Employee, { through: models.EmployeesItem });
       Item.belongsTo(models.Category);
+      Item.belongsToMany(models.Employee, { through: models.EmployeesItem });
     }
   }
   Item.init({
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     image_name: DataTypes.STRING,
     image_type: DataTypes.STRING,
     image_data: DataTypes.BLOB('long'),
-    categoryId: DataTypes.INTEGER
+    CategoryId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Item',

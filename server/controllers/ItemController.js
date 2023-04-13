@@ -3,7 +3,7 @@ const { Item } = require('../models');
 class ItemController {
     static async getAllItems(request, response) {
         try {
-            let items = Item.findAll({
+            let items = await Item.findAll({
                 order: [
                     ['id', 'asc']
                 ]

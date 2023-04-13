@@ -1,4 +1,6 @@
-const { Employee } = require('../models')
+const { Employee, EmployeesItem } = require('../models');
+const { decryptPassword, encryptPassword } = require('../helpers/bcrypt.js');
+const { generateToken, verifyToken } = require('../helpers/jsonwebtoken.js');
 
 class EmployeeController {
     static async getAllEmployees(request, response) {
@@ -29,12 +31,12 @@ class EmployeeController {
 
             let duplicateAccount = await Employee.findOne({
                 where: { email }
-            })
+            });
 
             if (duplicateAccount) {
                 response.status(403).json({
                     status: false,
-                    error: 'An account with this e-mail address already exists'
+                    message: 'An account with this e-mail address already exists'
                 })
             } else {
                 if (request.file) {
@@ -51,6 +53,11 @@ class EmployeeController {
                         image_data,
                         role
                     });
+
+                    response.status(201).json({
+                        status: true,
+                        data: result
+                    });
                 } else {
                     result = await Employee.create({
                         email,
@@ -63,11 +70,150 @@ class EmployeeController {
                     });
                 }
     
-                response.status(200).json({
+                response.status(201).json({
                     status: true,
                     data: result
                 });
             }
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                error: err
+            });
+        }
+    }
+
+    static async login(request, response) {
+        try {
+            const { email, password } = request.body;
+
+            let account = await Employee.findOne({
+                where: { email }
+            });
+
+            if (account) {
+                const isPasswordCorrect = decryptPassword(password, account.password);
+                
+                if (isPasswordCorrect) {
+                    let access_token = generateToken(account);
+                    let verify_token = verifyToken(access_token);
+
+                    console.log(verify_token);
+                    response.status(200).json({
+                        status: true,
+                        access_token: access_token
+                    });
+                } else {
+                    response.status(403).json({
+                        status: false,
+                        message: "Invalid e-mail or password"
+                    });
+                }
+            } else {
+                response.status(404).json({
+                    status: false,
+                    message: "An account with this e-mail address wasn't found"
+                })
+            }
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                error: err
+            });
+        }
+    }
+
+    static async update(request, response) {
+        try {
+            const id = +request.userData.id;
+            let { email, username, password, image_name, image_type, image_data, role } = request.body;
+            const new_password = encryptPassword(password);
+            let result;
+
+            if(request.file) {
+                image_name = request.file.originalname;
+                image_type = request.file.mimetype;
+                image_data = request.file.buffer;
+
+                result = await Employee.update({
+                    email, 
+                    username, 
+                    password: new_password, 
+                    image_name, 
+                    image_type, 
+                    image_data, 
+                    role
+                }, {
+                    where: {id},
+                });
+            } else {
+                result = await Employee.update({
+                    email, 
+                    username, 
+                    password: new_password, 
+                    image_name: null, 
+                    image_type: null, 
+                    image_data: null, 
+                    role
+                }, {
+                    where: {id},
+                });
+            }
+
+            result[0] === 1 ? response.status(200).json({
+                status: true,
+                message: `Account with an ID of ${id} has been updated`
+            }) : response.status(404).json({
+                status: false,
+                message: `Account with an ID of ${id} couldn't be updated or wasn't found`
+            });
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                error: err
+            });
+        }
+    }
+
+    static async delete(request, response) {
+        try {
+            const id = +request.userData.id;
+
+            let result;
+            let resultJunction;
+            let employeesItems = await EmployeesItem.findAll({
+                where: {
+                    EmployeeId: id
+                }
+            });
+
+            if(employeesItems.length !== 0) {
+                result = await Employee.destroy({
+                    where: {id}
+                });
+
+                resultJunction = await EmployeesItem.destroy({
+                    where: {
+                        EmployeeId: id
+                    }
+                });
+
+                console.log(`EmployeesItems with employeeId of ${id} has also been deleted`);
+            } else {
+                result = await Employee.destroy({
+                    where: {id}
+                });
+
+                console.log(`EmployeesItems with employeeId of ${id} couldn't be found`);
+            }
+            console.log(result)
+            result === 1 ? response.status(200).json({
+                status: true,
+                message: `Account with an ID of ${id} has been deleted`
+            }) : response.status(404).json({
+                status: false,
+                message: `Account with an ID of ${id} couldn't be deleted or wasn't found`
+            });
         } catch(err) {
             console.log(err)
             response.status(500).json({

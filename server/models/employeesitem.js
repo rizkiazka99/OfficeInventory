@@ -22,8 +22,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       autoIncrement: true
     },
-    employeeId: DataTypes.INTEGER,
-    itemId: DataTypes.INTEGER
+    EmployeeId: DataTypes.INTEGER,
+    ItemId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'EmployeesItem',

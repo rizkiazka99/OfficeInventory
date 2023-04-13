@@ -24,7 +24,7 @@ module.exports = {
       image_data: {
         type: Sequelize.BLOB
       },
-      categoryId: {
+      CategoryId: {
         type: Sequelize.INTEGER
       },
       createdAt: {
