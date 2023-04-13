@@ -8,6 +8,8 @@ employeesRoutes.get('/', EmployeeController.getAllEmployees);
 employeesRoutes.post('/register', upload.single("image"), EmployeeController.register);
 employeesRoutes.post('/login', EmployeeController.login);
 employeesRoutes.put('/update', authentication, upload.single("image"), EmployeeController.update);
-employeesRoutes.delete('/delete', authentication, EmployeeController.delete)
+employeesRoutes.delete('/delete', authentication, EmployeeController.delete);
+employeesRoutes.get('/getById/:id', authentication, EmployeeController.getById);
+employeesRoutes.get('/search/:username', authentication, EmployeeController.search);
 
 module.exports = employeesRoutes;

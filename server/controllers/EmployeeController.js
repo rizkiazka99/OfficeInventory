@@ -1,4 +1,4 @@
-const { Employee, EmployeesItem } = require('../models');
+const { Employee, EmployeesItem, sequelize } = require('../models');
 const { decryptPassword, encryptPassword } = require('../helpers/bcrypt.js');
 const { generateToken, verifyToken } = require('../helpers/jsonwebtoken.js');
 
@@ -216,6 +216,47 @@ class EmployeeController {
             });
         } catch(err) {
             console.log(err)
+            response.status(500).json({
+                status: false,
+                error: err
+            });
+        }
+    }
+
+    static async getById(request, response) {
+        try {
+            const id = +request.params.id;
+
+            let result = await Employee.findByPk(id);
+
+            response.status(200).json({
+                status: true,
+                data: result
+            });
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                error: err
+            });
+        }
+    }
+
+    static async search(request, response) {
+        const user_name = request.params.username.toLowerCase();
+
+        try {
+            let result = await Employee.findAll({
+                where: {
+                    username: sequelize.where(sequelize.fn('LOWER', sequelize.col('username')), 'LIKE', '%' + user_name + '%')
+                }
+            });
+
+            response.status(200).json({
+                status: true,
+                data_count: result.length,
+                data: result
+            });
+        } catch(err) {
             response.status(500).json({
                 status: false,
                 error: err
