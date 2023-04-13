@@ -10,6 +10,6 @@ employeesRoutes.post('/login', EmployeeController.login);
 employeesRoutes.put('/update', authentication, upload.single("image"), EmployeeController.update);
 employeesRoutes.delete('/delete', authentication, EmployeeController.delete);
 employeesRoutes.get('/getById/:id', authentication, EmployeeController.getById);
-employeesRoutes.get('/search/:username', authentication, EmployeeController.search);
+employeesRoutes.get('/search/:query', authentication, EmployeeController.search);
 
 module.exports = employeesRoutes;

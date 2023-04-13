@@ -1,6 +1,7 @@
 const { Employee, EmployeesItem, sequelize } = require('../models');
 const { decryptPassword, encryptPassword } = require('../helpers/bcrypt.js');
 const { generateToken, verifyToken } = require('../helpers/jsonwebtoken.js');
+const { Op } = require("sequelize");
 
 class EmployeeController {
     static async getAllEmployees(request, response) {
@@ -52,11 +53,6 @@ class EmployeeController {
                         image_type,
                         image_data,
                         role
-                    });
-
-                    response.status(201).json({
-                        status: true,
-                        data: result
                     });
                 } else {
                     result = await Employee.create({
@@ -242,12 +238,15 @@ class EmployeeController {
     }
 
     static async search(request, response) {
-        const user_name = request.params.username.toLowerCase();
+        const query = request.params.query.toLowerCase();
 
         try {
             let result = await Employee.findAll({
                 where: {
-                    username: sequelize.where(sequelize.fn('LOWER', sequelize.col('username')), 'LIKE', '%' + user_name + '%')
+                    [Op.or]: [
+                        { username: sequelize.where(sequelize.fn('LOWER', sequelize.col('username')), 'LIKE', '%' + query + '%') },
+                        { email: sequelize.where(sequelize.fn('LOWER', sequelize.col('email')), 'LIKE', '%' + query + '%') }
+                    ]          
                 }
             });
 
