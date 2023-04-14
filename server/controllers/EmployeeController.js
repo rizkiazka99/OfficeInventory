@@ -12,7 +12,7 @@ class EmployeeController {
                 ]
             });
 
-            employees.data.map((employee) => {
+            employees.map((employee) => {
                 if (employee.image_data !== null) {
                     const employee_image = employee.image_data.toString('base64');
                     employee['image_data'] = employee_image;
@@ -268,7 +268,7 @@ class EmployeeController {
                 }
             });
 
-            result.data.map((employee) => {
+            result.map((employee) => {
                 if (employee.image_data !== null) {
                     const employee_image = employee.image_data.toString('base64');
                     employee['image_data'] = employee_image;

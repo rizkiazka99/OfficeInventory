@@ -9,7 +9,7 @@ class ItemController {
                 ]
             });
 
-            items.data.map((item) => {
+            items.map((item) => {
                 if (item.image_data !== null) {
                     const item_image = item.image_data.toString('base64');
                     item['image_data'] = item_image;
@@ -228,7 +228,7 @@ class ItemController {
                 }
             });
 
-            result.data.map((item) => {
+            result.map((item) => {
                 if (item.image_data !== null) {
                     const item_image = item.image_data.toString('base64');
                     item['image_data'] = item_image;
