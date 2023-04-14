@@ -159,7 +159,9 @@ class CategoryController {
                     message: 'Only Admin(s) can perform this action'
                 });
             } else {
-                let result = await Category.findByPk(id);
+                let result = await Category.findByPk(id, {
+                    include: [ Item ]
+                });
 
                 result !== null ? response.status(200).json({
                     status: true,
@@ -181,7 +183,9 @@ class CategoryController {
         try {
             const id = +request.params.id;
 
-            let result = await Category.findByPk(id);
+            let result = await Category.findByPk(id, {
+                include: [ Item ]
+            });
 
             result !== null ? response.status(200).json({
                 status: true,
