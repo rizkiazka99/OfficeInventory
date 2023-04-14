@@ -12,6 +12,14 @@ class EmployeeController {
                 ]
             });
 
+            employees.map((employee) => {
+                if (employee.image_data !== null) {
+                    const employee_image = employee.image_data.toString('base64');
+                    employee['image_data'] = employee_image;
+                    return employee;
+                }
+            });
+
             response.status(200).json({
                 status: true,
                 data_count: employees.length,

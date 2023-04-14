@@ -9,6 +9,14 @@ class ItemController {
                 ]
             });
 
+            items.map((item) => {
+                if (item.image_data !== null) {
+                    const item_image = item.image_data.toString('base64');
+                    item['image_data'] = item_image;
+                    return item;
+                }
+            });
+
             response.status(200).json({
                 status: true,
                 data_count: items.length,
