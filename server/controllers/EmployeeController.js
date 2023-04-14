@@ -233,6 +233,13 @@ class EmployeeController {
 
             let result = await Employee.findByPk(id);
 
+            Object.keys(result).forEach((image_data, i) => {
+                if (result[image_data] !== null) {
+                    const employee_image = result[image_data].toString('base64');
+                    result[image_data] = employee_image;
+                }
+            });
+
             result !== null ? response.status(200).json({
                 status: true,
                 data: result

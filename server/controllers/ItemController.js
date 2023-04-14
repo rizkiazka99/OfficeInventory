@@ -191,6 +191,13 @@ class ItemController {
             } else {
                 let result = await Item.findByPk(id);
 
+                Object.keys(result).forEach((image_data, i) => {
+                    if (result[image_data] !== null) {
+                        const item_image = result[image_data].toString('base64');
+                        result[image_data] = item_image;
+                    }
+                });
+
                 result !== null ? response.status(200).json({
                     status: true,
                     data: result
