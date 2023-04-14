@@ -1,4 +1,4 @@
-const { Item, EmployeesItem, sequelize } = require('../models');
+const { Item, Category, EmployeesItem, sequelize } = require('../models');
 
 class ItemController {
     static async getAllItems(request, response) {
@@ -6,7 +6,8 @@ class ItemController {
             let items = await Item.findAll({
                 order: [
                     ['id', 'asc']
-                ]
+                ],
+                include: [ Category ]
             });
 
             items.map((item) => {
@@ -61,7 +62,7 @@ class ItemController {
                     });
                 }
     
-                response.status(200).json({
+                response.status(201).json({
                     status: true,
                     data: result
                 });
@@ -189,14 +190,20 @@ class ItemController {
                     message: 'Only Admin(s) can perform this action'
                 });
             } else {
+                let tempArr = [];
                 let result = await Item.findByPk(id);
 
-                Object.keys(result).forEach((image_data, i) => {
-                    if (result[image_data] !== null) {
-                        const item_image = result[image_data].toString('base64');
-                        result[image_data] = item_image;
-                    }
-                });
+                if (result !== null) {
+                    tempArr.push(result);
+                    tempArr.map((item) => {
+                        if (item.image_data !== null) {
+                            const item_image = item.image_data.toString('base64');
+                            item['image_data'] = item_image;
+                            return item;
+                        }
+                    });
+                    result = tempArr[0];
+                }
 
                 result !== null ? response.status(200).json({
                     status: true,
@@ -207,6 +214,7 @@ class ItemController {
                 });
             }
         } catch(err) {
+            console.log(err);
             response.status(500).json({
                 status: false,
                 error: err
@@ -214,8 +222,39 @@ class ItemController {
         }
     }
 
-    static async findByCategory(request, response) {
+    static async getDetail(request, response) {
+        try {
+            const id = +request.params.id;
+            let tempArr = [];
 
+            let result = await Item.findByPk(id);
+            
+            if (result !== null) {
+                tempArr.push(result);
+                tempArr.map((item) => {
+                    if (item.image_data !== null) {
+                        const item_image = item.image_data.toString('base64');
+                        item['image_data'] = item_image;
+                        return item;
+                    }
+                });
+                result = tempArr[0]
+            }
+            
+            result !== null ? response.status(200).json({
+                status: true,
+                data: result
+            }) : response.status(404).json({
+                status: false,
+                message: `Item with an ID of ${id} wasn't found`
+            });
+        } catch(err) {
+            console.log(err)
+            response.status(500).json({
+                status: false,
+                error: err
+            });
+        }
     }
 
     static async search(request, response) {

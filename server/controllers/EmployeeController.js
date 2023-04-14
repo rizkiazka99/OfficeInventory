@@ -230,15 +230,21 @@ class EmployeeController {
     static async getById(request, response) {
         try {
             const id = +request.params.id;
+            let tempArr = [];
 
             let result = await Employee.findByPk(id);
 
-            Object.keys(result).forEach((image_data, i) => {
-                if (result[image_data] !== null) {
-                    const employee_image = result[image_data].toString('base64');
-                    result[image_data] = employee_image;
-                }
-            });
+            if (result !== null) {
+                tempArr.push(result);
+                tempArr.map((employee) => {
+                    if (employee.image_data !== null) {
+                        const employee_image = employee.image_data.toString('base64');
+                        employee['image_data'] = employee_image;
+                        return employee;
+                    }
+                });
+                result = tempArr[0];
+            }
 
             result !== null ? response.status(200).json({
                 status: true,

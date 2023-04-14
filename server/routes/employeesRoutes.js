@@ -9,7 +9,7 @@ employeesRoutes.post('/register', upload.single("image"), EmployeeController.reg
 employeesRoutes.post('/login', EmployeeController.login);
 employeesRoutes.put('/update', authentication, upload.single("image"), EmployeeController.update);
 employeesRoutes.delete('/delete', authentication, EmployeeController.delete);
-employeesRoutes.get('/getById/:id', authentication, EmployeeController.getById);
-employeesRoutes.get('/search/:query', authentication, EmployeeController.search);
+employeesRoutes.get('/getById/:id', EmployeeController.getById);
+employeesRoutes.get('/search/:query', EmployeeController.search);
 
 module.exports = employeesRoutes;
