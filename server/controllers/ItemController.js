@@ -9,7 +9,7 @@ class ItemController {
                 ]
             });
 
-            items.map((item) => {
+            items.data.map((item) => {
                 if (item.image_data !== null) {
                     const item_image = item.image_data.toString('base64');
                     item['image_data'] = item_image;
@@ -218,6 +218,14 @@ class ItemController {
             let result = await Item.findAll({
                 where: {
                     name: sequelize.where(sequelize.fn('LOWER', sequelize.col('name')), 'LIKE', '%' + query + '%')
+                }
+            });
+
+            result.data.map((item) => {
+                if (item.image_data !== null) {
+                    const item_image = item.image_data.toString('base64');
+                    item['image_data'] = item_image;
+                    return item;
                 }
             });
 

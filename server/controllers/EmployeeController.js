@@ -12,7 +12,7 @@ class EmployeeController {
                 ]
             });
 
-            employees.map((employee) => {
+            employees.data.map((employee) => {
                 if (employee.image_data !== null) {
                     const employee_image = employee.image_data.toString('base64');
                     employee['image_data'] = employee_image;
@@ -258,6 +258,14 @@ class EmployeeController {
                         { username: sequelize.where(sequelize.fn('LOWER', sequelize.col('username')), 'LIKE', '%' + query + '%') },
                         { email: sequelize.where(sequelize.fn('LOWER', sequelize.col('email')), 'LIKE', '%' + query + '%') }
                     ]          
+                }
+            });
+
+            result.data.map((employee) => {
+                if (employee.image_data !== null) {
+                    const employee_image = employee.image_data.toString('base64');
+                    employee['image_data'] = employee_image;
+                    return employee;
                 }
             });
 
