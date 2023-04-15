@@ -149,7 +149,7 @@ class EmployeeController {
             let result;
 
             if (id !== idAuth) {
-                response.status(401).json({
+                response.status(403).json({
                     status: false,
                     message: 'You are not the authorized user'
                 });

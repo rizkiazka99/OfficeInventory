@@ -38,7 +38,7 @@ class ItemController {
             const role = request.userData.role;
 
             if (role !== 'Admin') {
-                response.status(401).json({
+                response.status(403).json({
                     status: false,
                     message: 'Only Admin(s) can perform this action'
                 });
@@ -82,7 +82,7 @@ class ItemController {
             let { name, stock, image_name, image_type, image_data, CategoryId } = request.body;
 
             if (role !== 'Admin') {
-                response.status(401).json({
+                response.status(403).json({
                     status: false,
                     message: 'Only Admin(s) can perform this action'
                 });
@@ -130,7 +130,7 @@ class ItemController {
             const role = request.userData.role;
 
             if (role !== 'Admin') {
-                response.status(401).json({
+                response.status(403).json({
                     status: false,
                     message: 'Only Admin(s) can perform this action'
                 });
@@ -185,7 +185,7 @@ class ItemController {
             const role = request.userData.role;
 
             if (role !== 'Admin') {
-                response.status(401).json({
+                response.status(403).json({
                     status: false,
                     message: 'Only Admin(s) can perform this action'
                 });

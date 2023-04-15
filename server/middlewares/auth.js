@@ -16,7 +16,7 @@ const authentication = (request, response, next) => {
             });
         }
     } else {
-        response.status(404).json({
+        response.status(401).json({
             status: false,
             message: 'Access Token wasn\'t found'
         })

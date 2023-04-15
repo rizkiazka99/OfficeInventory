@@ -1,4 +1,5 @@
 const { EmployeesItem } = require('../models');
+const { Op } = require('sequelize');
 
 class EmployeeItemController {
     static async getAllEmployeesItems(request, response) {
@@ -26,14 +27,30 @@ class EmployeeItemController {
         try {
             const { EmployeeId, ItemId } = request.body;
 
-            let result = await EmployeesItem.create({
-                EmployeeId, ItemId
+            let duplicateRelation = await EmployeesItem.findAll({
+                where: {
+                    [Op.and]: [
+                        { EmployeeId: EmployeeId },
+                        { ItemId: ItemId }
+                    ]
+                }
             });
 
-            response.status(201).json({
-                status: true,
-                data: result
-            });
+            if (duplicateRelation.length != 0) {
+                response.status(403).json({
+                    status: false,
+                    message: 'Each employee can only borrow one of the same item'
+                });
+            } else {
+                let result = await EmployeesItem.create({
+                    EmployeeId, ItemId
+                });
+    
+                response.status(201).json({
+                    status: true,
+                    data: result
+                });
+            }
         } catch(err) {
             response.status(500).json({
                 status: false,

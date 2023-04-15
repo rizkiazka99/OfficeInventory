@@ -29,7 +29,7 @@ class CategoryController {
             const { name } = request.body;
 
             if (role !== 'Admin') {
-                response.status(401).json({
+                response.status(403).json({
                     status: false,
                     message: 'Only Admin(s) can perform this action'
                 });
@@ -56,7 +56,7 @@ class CategoryController {
             const { name } = request.body;
 
             if (role !== 'Admin') {
-                response.status(401).json({
+                response.status(403).json({
                     status: false,
                     message: 'Only Admin(s) can perform this action'
                 });
@@ -89,7 +89,7 @@ class CategoryController {
             const id = +request.params.id;
 
             if (role !== 'Admin') {
-                response.status(401).json({
+                response.status(403).json({
                     status: false,
                     message: 'Only Admin(s) can perform this action'
                 });
@@ -154,7 +154,7 @@ class CategoryController {
             const role = request.userData.role;
 
             if (role !== 'Admin') {
-                response.status(401).json({
+                response.status(403).json({
                     status: false,
                     message: 'Only Admin(s) can perform this action'
                 });
