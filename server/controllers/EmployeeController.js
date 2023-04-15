@@ -358,6 +358,14 @@ class EmployeeController {
                         where: {id}
                     });
 
+                    itemsResult.map((item) => {
+                        if (item.image_data !== null) {
+                            const item_image = item.image_data.toString('base64');
+                            item['image_data'] = item_image;
+                            return item;
+                        }
+                    });
+
                     if (itemsResult.length !== 0) {
                         items.push(itemsResult[0].dataValues);
                     }

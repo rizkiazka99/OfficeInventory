@@ -236,9 +236,9 @@ class ItemController {
                 if (item.image_data !== null) {
                     const item_image = item.image_data.toString('base64');
                     item['image_data'] = item_image;
-                    return emp;
+                    return item;
                 }
-            })
+            });
 
             let employeesItems = await EmployeesItem.findAll({
                 where: {
@@ -259,6 +259,14 @@ class ItemController {
 
                     employeesResult = await Employee.findAll({
                         where: {id}
+                    });
+
+                    employeesResult.map((employee) => {
+                        if (employee.image_data !== null) {
+                            const employee_image = employee.image_data.toString('base64');
+                            employee['image_data'] = employee_image;
+                            return employee;
+                        }
                     });
 
                     if (employeesResult.length !== 0) {
