@@ -329,6 +329,14 @@ class EmployeeController {
                 where: { id }
             });
 
+            employee.map((emp) => {
+                if (emp.image_data !== null) {
+                    const employee_image = emp.image_data.toString('base64');
+                    emp['image_data'] = employee_image;
+                    return emp;
+                }
+            })
+
             let employeesItems = await EmployeesItem.findAll({
                 where: {
                     EmployeeId: id
@@ -358,12 +366,16 @@ class EmployeeController {
 
             result = {
                 employee: employee[0],
-                items: items
+                borrowed_items: items,
+                number_of_borrowed_items: items.length
             }
 
-            response.status(200).json({
+            result.employee !== undefined ? response.status(200).json({
                 status: true,
                 data: result
+            }) : response.status(404).json({
+                status: false,
+                message: `Employee with an ID of ${id} wasn't found`
             });
         } catch(err) {
             console.log(err)

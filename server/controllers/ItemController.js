@@ -1,4 +1,4 @@
-const { Item, Category, EmployeesItem, sequelize } = require('../models');
+const { Item, Employee, Category, EmployeesItem, sequelize } = require('../models');
 
 class ItemController {
     static async getAllItems(request, response) {
@@ -225,23 +225,54 @@ class ItemController {
     static async getDetail(request, response) {
         try {
             const id = +request.params.id;
-            let tempArr = [];
+            let result = {};
+            let employees = [];
 
-            let result = await Item.findByPk(id);
-            
-            if (result !== null) {
-                tempArr.push(result);
-                tempArr.map((item) => {
-                    if (item.image_data !== null) {
-                        const item_image = item.image_data.toString('base64');
-                        item['image_data'] = item_image;
-                        return item;
-                    }
+            let item = await Item.findAll({
+                where: { id }
+            });
+
+            item.map((item) => {
+                if (item.image_data !== null) {
+                    const item_image = item.image_data.toString('base64');
+                    item['image_data'] = item_image;
+                    return emp;
+                }
+            })
+
+            let employeesItems = await EmployeesItem.findAll({
+                where: {
+                    ItemId: id
+                }
+            });
+
+            if (employeesItems.length !== 0) {
+                let employeesId = [];
+                let employeesResult;
+
+                employeesItems.forEach((employee) => {
+                    employeesId.push(employee.dataValues.EmployeeId);
                 });
-                result = tempArr[0]
+
+                for(let i = 0; i < employeesId.length; i++) {
+                    let id = employeesId[i];
+
+                    employeesResult = await Employee.findAll({
+                        where: {id}
+                    });
+
+                    if (employeesResult.length !== 0) {
+                        employees.push(employeesResult[0].dataValues);
+                    }
+                }
             }
-            
-            result !== null ? response.status(200).json({
+
+            result = {
+                item: item[0],
+                employees: employees,
+            }
+
+            result.item !== undefined ? response.status(200).json({
                 status: true,
                 data: result
             }) : response.status(404).json({
