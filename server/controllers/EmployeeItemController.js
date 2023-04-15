@@ -1,4 +1,4 @@
-const { EmployeesItem } = require('../models');
+const { EmployeesItem, Item } = require('../models');
 const { Op } = require('sequelize');
 
 class EmployeeItemController {
@@ -42,6 +42,27 @@ class EmployeeItemController {
                     message: 'Each employee can only borrow one of the same item'
                 });
             } else {
+                let borrowed_items = await Item.findAll({
+                    where: {
+                        id: ItemId
+                    }
+                });
+
+                const { name, stock, image_null, image_type, image_data, CategoryId } = borrowed_items[0].dataValues;
+
+                let updateStock = await Item.update({
+                    name,
+                    stock: stock - 1,
+                    image_null,
+                    image_type,
+                    image_data,
+                    CategoryId
+                }, {
+                    where: {
+                        id: ItemId
+                    }
+                });
+
                 let result = await EmployeesItem.create({
                     EmployeeId, ItemId
                 });
