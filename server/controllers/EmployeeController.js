@@ -101,11 +101,22 @@ class EmployeeController {
                 if (isPasswordCorrect) {
                     let access_token = generateToken(account);
                     let verify_token = verifyToken(access_token);
+                    let tempArr = [];
 
-                    console.log(verify_token);
+                    tempArr.push(verify_token);
+                    tempArr.map((employee) => {
+                        if (employee.image_data !== null) {
+                            const employee_image = employee.image_data.toString('base64');
+                            employee['image_data'] = employee_image;
+                            return employee;
+                        }
+                    });
+                    verify_token = tempArr[0];
+
                     response.status(200).json({
                         status: true,
-                        access_token: access_token
+                        access_token: access_token,
+                        user_data: verify_token
                     });
                 } else {
                     response.status(403).json({
