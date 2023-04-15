@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     ItemId: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
         notNull: {
