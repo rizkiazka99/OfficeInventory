@@ -1,4 +1,4 @@
-const { Employee, EmployeesItem, sequelize } = require('../models');
+const { Employee, Item, EmployeesItem, sequelize } = require('../models');
 const { decryptPassword, encryptPassword } = require('../helpers/bcrypt.js');
 const { generateToken, verifyToken } = require('../helpers/jsonwebtoken.js');
 const { Op } = require("sequelize");
@@ -101,6 +101,8 @@ class EmployeeController {
                 if (isPasswordCorrect) {
                     let access_token = generateToken(account);
                     let verify_token = verifyToken(access_token);
+                    let verify_token_ = verifyToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0cm95bGFuY2FzdGVyMTIzQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoidF9sYW5jYXN0ZXIiLCJpbWFnZV9uYW1lIjpudWxsLCJpbWFnZV90eXBlIjpudWxsLCJpbWFnZV9kYXRhIjpudWxsLCJyb2xlIjoiVUkvVVggRGVzaWduZXIiLCJpYXQiOjE2ODEzODQzMDN9.twjXGOcFjwKrIr4Wca0vtAocD0FKEmscL1I7t-r4ONY');
+                    console.log(verify_token_)
                     let tempArr = [];
 
                     tempArr.push(verify_token);
@@ -140,48 +142,56 @@ class EmployeeController {
 
     static async update(request, response) {
         try {
-            const id = +request.userData.id;
+            const id = +request.params.id;
+            const idAuth = +request.userData.id;
             let { email, username, password, image_name, image_type, image_data, role } = request.body;
             const new_password = encryptPassword(password);
             let result;
 
-            if(request.file) {
-                image_name = request.file.originalname;
-                image_type = request.file.mimetype;
-                image_data = request.file.buffer;
-
-                result = await Employee.update({
-                    email, 
-                    username, 
-                    password: new_password, 
-                    image_name, 
-                    image_type, 
-                    image_data, 
-                    role
-                }, {
-                    where: {id},
+            if (id !== idAuth) {
+                response.status(401).json({
+                    status: false,
+                    message: 'You are not the authorized user'
                 });
             } else {
-                result = await Employee.update({
-                    email, 
-                    username, 
-                    password: new_password, 
-                    image_name: null, 
-                    image_type: null, 
-                    image_data: null, 
-                    role
-                }, {
-                    where: {id},
+                if(request.file) {
+                    image_name = request.file.originalname;
+                    image_type = request.file.mimetype;
+                    image_data = request.file.buffer;
+    
+                    result = await Employee.update({
+                        email, 
+                        username, 
+                        password: new_password, 
+                        image_name, 
+                        image_type, 
+                        image_data, 
+                        role
+                    }, {
+                        where: {id},
+                    });
+                } else {
+                    result = await Employee.update({
+                        email, 
+                        username, 
+                        password: new_password, 
+                        image_name: null, 
+                        image_type: null, 
+                        image_data: null, 
+                        role
+                    }, {
+                        where: {id},
+                    });
+                }
+
+                result[0] === 1 ? response.status(200).json({
+                    status: true,
+                    message: `Account with an ID of ${id} has been updated`
+                }) : response.status(404).json({
+                    status: false,
+                    message: `Account with an ID of ${id} couldn't be updated or wasn't found`
                 });
             }
-
-            result[0] === 1 ? response.status(200).json({
-                status: true,
-                message: `Account with an ID of ${id} has been updated`
-            }) : response.status(404).json({
-                status: false,
-                message: `Account with an ID of ${id} couldn't be updated or wasn't found`
-            });
         } catch(err) {
             response.status(500).json({
                 status: false,
@@ -302,6 +312,61 @@ class EmployeeController {
                 message: `Couldn't find what you're looking for with the query of '${request.params.query}'`
             });
         } catch(err) {
+            response.status(500).json({
+                status: false,
+                error: err
+            });
+        }
+    }
+
+    static async getDetail(request, response) {
+        try {
+            const id = +request.params.id;
+            let result = {};
+            let items = [];
+
+            let employee = await Employee.findAll({
+                where: { id }
+            });
+
+            let employeesItems = await EmployeesItem.findAll({
+                where: {
+                    EmployeeId: id
+                }
+            });
+
+            if (employeesItems.length !== 0) {
+                let itemsId = [];
+                let itemsResult;
+
+                employeesItems.forEach((item) => {
+                    itemsId.push(item.dataValues.ItemId);
+                });
+
+                for(let i = 0; i < itemsId.length; i++) {
+                    let id = itemsId[i];
+
+                    itemsResult = await Item.findAll({
+                        where: {id}
+                    });
+
+                    if (itemsResult.length !== 0) {
+                        items.push(itemsResult[0].dataValues);
+                    }
+                }
+            }
+
+            result = {
+                employee: employee[0],
+                items: items
+            }
+
+            response.status(200).json({
+                status: true,
+                data: result
+            });
+        } catch(err) {
+            console.log(err)
             response.status(500).json({
                 status: false,
                 error: err
