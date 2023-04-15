@@ -1,0 +1,134 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Space+Mono&display=swap');
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f4f5f7 !important;
+}
+
+table {
+    background-color: #fff;
+}
+
+.dropdown-item:hover {
+    color: #292b2c !important;
+}
+
+.red-color, .red-color:hover {
+    color: #D03D56 !important;
+}
+
+.main-text {
+    color: #8D021F !important;
+}
+
+.main-color {
+    background-color: #8D021F !important;
+}
+
+.section-title > h2, .dark-color {
+    color: #292b2c;
+}
+
+.card-product, .btn-create-custom {
+    color: #fff;
+    background-color: #292b2c !important;
+}
+
+.card-text > p {
+    margin-bottom: 5px;
+}
+
+.card-img, .profile-image {
+    aspect-ratio: 1;
+    object-fit: cover;
+    object-position: top;
+    background-color: gray;
+}
+
+.custom-image {
+    max-width: 45%;
+    height: auto;
+}
+
+.section-register, .section-login {
+    /* margin: 50px 25px; */
+    margin-bottom: 25px;
+}
+
+.bg-dark {
+    background-color: #292b2c !important;
+}
+
+.bg-custom{
+    background-color: #f4f5f7;
+}
+
+
+.product-section > img {
+    min-height: 250px !important;
+}
+
+.mask {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.message > div{
+    margin-bottom: 0;
+}
+
+a {
+    color: inherit;
+}
+
+.gradient-custom {
+    background: #292b2c;
+}
+
+.sign-link {
+    color: #8D021F;
+}
+
+.sign-link:hover {
+    color: black;
+}
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.pagination button {
+    width: 30px;
+    height: 30px;
+    font-family: inherit;
+    font-size: 14px;
+    margin: 0 5px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    color:black;
+}
+
+.pagination button.active {
+    font-weight: 900;
+    background: #8D021F;
+    color: white;
+    border-color: #8D021F;
+}
+
+/* Profiles */
+.social-list{
+    display:flex;
+    list-style:none;
+    justify-content:center;
+    padding:0;
+}
+
+.social-list li{
+    padding:10px;
+    color:#8E24AA;
+    font-size:19px;
+}
