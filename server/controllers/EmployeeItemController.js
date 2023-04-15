@@ -42,13 +42,13 @@ class EmployeeItemController {
                     message: 'Each employee can only borrow one of the same item'
                 });
             } else {
-                let borrowed_items = await Item.findAll({
+                let borrowedItem = await Item.findAll({
                     where: {
                         id: ItemId
                     }
                 });
 
-                const { name, stock, image_null, image_type, image_data, CategoryId } = borrowed_items[0].dataValues;
+                const { name, stock, image_null, image_type, image_data, CategoryId } = borrowedItem[0].dataValues;
 
                 if (stock > 0) {
                     let updateStock = await Item.update({
@@ -89,19 +89,61 @@ class EmployeeItemController {
 
     static async delete(request, response) {
         try {
-            const id = +request.params.id;
+            const { EmployeeId, ItemId } = request.body;
 
-            let result = await EmployeesItem.destroy({
-                where: {id}
+            let doesRelationExist = await EmployeesItem.findAll({
+                where: {
+                    [Op.and]: [
+                        { EmployeeId: EmployeeId },
+                        { ItemId: ItemId }
+                    ]
+                }
             });
 
-            result === 1 ? response.status(200).json({
-                status: true,
-                message: `EmployeesItems with an ID of ${id} has been deleted`
-            }) : response.status(404).json({
-                status: false,
-                message: `EmployeesItems with an ID of ${id} couldn't be deleted or wasn't found`
-            });
+            if (doesRelationExist.length === 0) {
+                response.status(404).json({
+                    status: false,
+                    message: `Employee with an ID of ${EmployeeId} didn't borrow Item with an ID of ${ItemId}`
+                });
+            } else {
+                let borrowedItem = await Item.findAll({
+                    where: {
+                        id: ItemId
+                    }
+                });
+    
+                const {name, stock, image_null, image_type, image_data, CategoryId} = borrowedItem[0];
+    
+                let updateStock = await Item.update({
+                    name,
+                    stock: stock + 1,
+                    image_null,
+                    image_type,
+                    image_data,
+                    CategoryId
+                }, {
+                    where: {
+                        id: ItemId
+                    }
+                });
+    
+                let result = await EmployeesItem.destroy({
+                    where: {
+                        [Op.and]: [
+                            { EmployeeId: EmployeeId },
+                            { ItemId: ItemId }
+                        ]
+                    }
+                });
+    
+                result === 1 ? response.status(200).json({
+                    status: true,
+                    message: `Item with an ID of ${ItemId} has been returned by Employee with an ID of ${EmployeeId}`
+                }) : response.status(404).json({
+                    status: false,
+                    message: `Failed to return Item with an ID of ${ItemId}`
+                });
+            }
         } catch(err) {
             response.status(500).json({
                 status: false,
