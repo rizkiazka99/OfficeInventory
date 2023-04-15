@@ -50,27 +50,34 @@ class EmployeeItemController {
 
                 const { name, stock, image_null, image_type, image_data, CategoryId } = borrowed_items[0].dataValues;
 
-                let updateStock = await Item.update({
-                    name,
-                    stock: stock - 1,
-                    image_null,
-                    image_type,
-                    image_data,
-                    CategoryId
-                }, {
-                    where: {
-                        id: ItemId
-                    }
-                });
-
-                let result = await EmployeesItem.create({
-                    EmployeeId, ItemId
-                });
+                if (stock > 0) {
+                    let updateStock = await Item.update({
+                        name,
+                        stock: stock - 1,
+                        image_null,
+                        image_type,
+                        image_data,
+                        CategoryId
+                    }, {
+                        where: {
+                            id: ItemId
+                        }
+                    });
     
-                response.status(201).json({
-                    status: true,
-                    data: result
-                });
+                    let result = await EmployeesItem.create({
+                        EmployeeId, ItemId
+                    });
+        
+                    response.status(201).json({
+                        status: true,
+                        data: result
+                    });
+                } else {
+                    response.status(403).json({
+                        status: false,
+                        message: 'Sorry, we\'ve run out of stock on this item, please wait until it\'s been restocked'
+                    });
+                }
             }
         } catch(err) {
             response.status(500).json({
