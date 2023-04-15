@@ -22,8 +22,30 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       autoIncrement: true
     },
-    EmployeeId: DataTypes.INTEGER,
-    ItemId: DataTypes.INTEGER
+    EmployeeId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: {
+          message: 'EmployeeId cannot be null'
+        },
+        isInt: {
+          message: 'EmployeeId has to be an integer'
+        }
+      }
+    },
+    ItemId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          message: 'ItemId name cannot be null'
+        },
+        isInt: {
+          message: 'ItemId has to be an integer'
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'EmployeesItem',

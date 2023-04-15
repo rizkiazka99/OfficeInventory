@@ -16,12 +16,45 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Item.init({
-    name: DataTypes.STRING,
-    stock: DataTypes.INTEGER,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          message: 'Name cannot be blank'
+        },
+        notNull: {
+          message: 'Name cannot be null'
+        }
+      }
+    },
+    stock: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: {
+          message: 'Stock cannot be null'
+        },
+        isInt: {
+          message: 'Stock has to be an integer'
+        }
+      }
+    },
     image_name: DataTypes.STRING,
     image_type: DataTypes.STRING,
     image_data: DataTypes.BLOB('long'),
-    CategoryId: DataTypes.INTEGER
+    CategoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: {
+          message: 'CategoryId cannot be null'
+        },
+        isInt: {
+          message: 'CategoryId has to be an integer'
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Item',
