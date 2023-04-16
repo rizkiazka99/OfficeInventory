@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import EmptyRow from "../../helpers/EmptyRow";
+import { Link } from "react-router-dom";
+import Select from "react-select";
+import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { getItems, deleteItem } from "../../axios/itemAxios";
 import { getCategories } from "../../axios/categoryAxios";
-import { Link } from "react-router-dom";
-import { AiFillEdit, AiFillDelete } from "react-icons/ai";
+import EmptyRow from "../../helpers/EmptyRow";
 import Pagination from "../../components/Pagination";
-import Select from "react-select";
 
 const Items = () => {
     const [items, setItems] = useState([]);

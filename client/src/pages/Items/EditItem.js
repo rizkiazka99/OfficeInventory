@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Select from "react-select";
 import { useNavigate, useParams } from "react-router-dom";
+import Select from "react-select";
 import { getItemById, editItem } from "../../axios/itemAxios";
 import { getCategories } from "../../axios/categoryAxios";
 

@@ -1,6 +1,10 @@
 // Home
 import Home from "./home/Home";
 
+// Borrows
+import Borrows from "./borrows/Borrows";
+import CreateBorrow from "./borrows/CreateBorrow";
+
 // Items
 import Items from "./Items/Items";
 import CreateItem from "./Items/CreateItem";
@@ -27,6 +31,8 @@ import NotFound from "./others/NotFound";
 
 export {
     Home,
+    Borrows,
+    CreateBorrow,
     CreateItem,
     EditItem,
     Items,

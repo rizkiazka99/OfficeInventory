@@ -11,6 +11,7 @@ const CreateItem = () => {
         CategoryId: "",
         image: null,
     });
+
     let [categories, setCategories] = useState();
     let categoryOptions = [];
     const navigation = useNavigate();

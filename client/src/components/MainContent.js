@@ -2,6 +2,8 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import {
     Home,
+    Borrows,
+    CreateBorrow,
     CreateItem,
     EditItem,
     Items,
@@ -58,6 +60,11 @@ const MainContent = () => {
                         element={<ChangePassword></ChangePassword>}
                     ></Route>
                 </Route>
+                <Route path="borrows/" element={<Borrows></Borrows>}></Route>
+                <Route
+                    path="borrows/create"
+                    element={<CreateBorrow></CreateBorrow>}
+                ></Route>
                 <Route path="*" element={<NotFound></NotFound>} />
             </Routes>
         </div>
