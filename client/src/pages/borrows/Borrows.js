@@ -111,9 +111,6 @@ const Borrows = () => {
                                                     </td>
                                                 ))}
                                             <td>
-                                                <Link to={`/items/edit/${id}`}>
-                                                    <AiFillEdit className="dark-color me-2"></AiFillEdit>
-                                                </Link>
                                                 <button
                                                     className="btn p-0 mb-1"
                                                     onClick={() =>
