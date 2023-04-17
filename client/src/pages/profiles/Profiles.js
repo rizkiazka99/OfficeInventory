@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { BsFillGearFill } from "react-icons/bs";
 import { RiLockPasswordFill } from "react-icons/ri";
+import { FaPencilAlt } from "react-icons/fa"
 import { detail, getUserById } from "../../axios/userAxios";
-import { addBorrow, returnBorrow } from "../../axios/borrowAxios";
+import { returnBorrow } from "../../axios/borrowAxios";
 import EmptyList from "../others/EmptyList";
 
 const Profiles = () => {
@@ -13,8 +14,8 @@ const Profiles = () => {
         EmployeeId: 0,
         ItemId: 0
     });
-    const message = 'You haven\'t borrowed any items yet';
 
+    const message = 'You haven\'t borrowed any items yet';
     const params = useParams();
     const { id } = params;
     const userId = localStorage.getItem('user_id')
@@ -50,7 +51,7 @@ const Profiles = () => {
                             </div>
 
                             <div className="text-center mt-3">
-                                <span
+                                <Link to={`/users/edit/${id}`}><span
                                     className={`${
                                         user.role === "user"
                                             ? "bg-secondary"
@@ -58,11 +59,11 @@ const Profiles = () => {
                                     } p-1 px-4 rounded text-white`}
                                 >
                                     {user.role}
-                                </span>
+                                </span></Link>
                                 <h5 className="mt-2 mb-0">{user.username}</h5>
                                 { user.role === 'Admin' ? <span>Admin</span> 
                                     : <span>Developer</span>}
-                                <div className="setting-section mt-4">
+                                <div className="d-flex justify-content-center px-2">
                                     <Link to={`/users/${id}/edit`}>
                                         <BsFillGearFill
                                             className="me-2 text-dark"
@@ -75,6 +76,12 @@ const Profiles = () => {
                                             size={22}
                                         ></RiLockPasswordFill>
                                     </Link>
+                                    {/*<Link to={`/users/edit/${id}`}>
+                                        <FaPencilAlt
+                                            className="text-dark"
+                                            size={22}
+                                        ></FaPencilAlt>
+                                    </Link>*/}
                                 </div>
                             </div>
                         </div>

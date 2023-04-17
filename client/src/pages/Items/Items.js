@@ -49,9 +49,9 @@ const Items = () => {
             </section>
             <section className="container">
                 <div className="d-flex justify-content-between">
-                    <Link className="btn btn-dark" to={`/items/create`}>
+                    { role === 'Admin' ? <Link className="btn btn-dark" to={`/items/create`}>
                         Add Item
-                    </Link>
+                    </Link> : <></> }
                     <div className="btn-group ms-2">
                         <Select
                             options={categoryOptions}

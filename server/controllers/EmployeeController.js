@@ -131,15 +131,16 @@ class EmployeeController {
         try {
             const id = +request.params.id;
             const idAuth = +request.userData.id;
+            const roleAuth = request.userData.role;
             let { email, username, password, image_name, image_type, image_data, role } = request.body;
             let result;
 
-            if (id !== idAuth) {
+            if (id !== idAuth && roleAuth !== 'Admin') {
                 response.status(403).json({
                     status: false,
                     message: 'You are not the authorized user'
                 });
-            } else {
+            } else if (id == idAuth || id !== idAuth && roleAuth == 'Admin') {
                 let employee = await Employee.findByPk(id);
                 console.log(request.body)
 

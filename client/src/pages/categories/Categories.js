@@ -29,13 +29,14 @@ const Categories = () => {
                 <h3 className="my-4 fw-bold">Category List</h3>
             </section>
             <section className="container">
-                <Link className="btn btn-dark" to={`/categories/create`}>
+                { role === 'Admin' ? <Link className="btn btn-dark" to={`/categories/create`}>
                     Add Category
-                </Link>
+                </Link> : <></> }
                 <section className="d-flex justify-content-center">
                     <table className="table table-bordered text-center mt-2">
                         <thead>
                             <tr className="table-dark">
+                                <th>No.</th>
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Available Item(s)</th>
@@ -50,6 +51,7 @@ const Categories = () => {
                                     return (
                                         <tr key={id}>
                                             <td>{index + 1}</td>
+                                            <td>{id}</td>
                                             <td>{name}</td>
                                             <td>{Items.length}</td>
                                             <td>

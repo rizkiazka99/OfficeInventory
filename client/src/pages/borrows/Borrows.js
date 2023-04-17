@@ -77,6 +77,7 @@ const Borrows = () => {
                     <table className="table table-bordered text-center mt-2">
                         <thead>
                             <tr className="table-dark">
+                                <th>No.</th>
                                 <th>ID</th>
                                 <th>Employee Name</th>
                                 <th>Item Borrowed</th>
@@ -91,6 +92,7 @@ const Borrows = () => {
                                     return (
                                         <tr key={id}>
                                             <td>{index + 1}</td>
+                                            <td>{id}</td>
                                             {users
                                                 ?.filter(
                                                     (user) =>

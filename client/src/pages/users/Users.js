@@ -16,7 +16,12 @@ const Users = () => {
     const postsPerPage = 5;
     const roleOptions = [
         { value: "1", label: "Admin" },
-        { value: "2", label: "User" },
+        { value: "2", label: "Front End Developer" },
+        { value: "3", label: "Mobile App Developer" },
+        { value: "4", label: "Back End Developer" },
+        { value: "5", label: "Full Stack Developer" },
+        { value: "6", label: "UI/UX Developer" },
+        { value: "7", label: "QA Engineer" },
     ];
 
     useEffect(() => {
@@ -62,6 +67,7 @@ const Users = () => {
                     <table className="table table-bordered text-center mt-2">
                         <thead>
                             <tr className="table-dark">
+                                <th>No.</th>
                                 <th>ID</th>
                                 <th>Username</th>
                                 <th>E-mail</th>
@@ -76,6 +82,7 @@ const Users = () => {
                                     console.log(userId)
                                     return (
                                         <tr key={id}>
+                                            <td>{index + 1}</td>
                                             <td>{id}</td>
                                             <td>{username}</td>
                                             <td>{email}</td>

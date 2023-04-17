@@ -9,6 +9,7 @@ const Navbar = (props) => {
     const { loginStatus, loginCbHandler } = props;
     const userId = localStorage.getItem("user_id");
     const username = localStorage.getItem("username");
+    const role = localStorage.getItem('role');
 
     const navigation = useNavigate();
 
@@ -48,11 +49,11 @@ const Navbar = (props) => {
                                 Home
                             </Link>
                         </li>
-                        <li className="nav-item">
+                        { role === 'Admin' ? <li className="nav-item">
                             <Link className="nav-link active" to="/borrows">
                                 Borrows
                             </Link>
-                        </li>
+                        </li> : <></> }
                         <li className="nav-item">
                             <Link className="nav-link active" to="/items">
                                 Items

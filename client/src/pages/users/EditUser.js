@@ -22,6 +22,15 @@ const EditUser = () => {
         getUser();
     }, []);
 
+    const roles = [
+        'Front End Developer',
+        'Mobile App Developer',
+        'Back End Developer',
+        'Full Stack Developer',
+        'UI/UX Engineer',
+        'QA Engineer'
+    ];
+
     const navigation = useNavigate();
 
     const submitHandler = () => {
@@ -37,17 +46,32 @@ const EditUser = () => {
             <section className="container d-flex justify-content-center">
                 <div className="w-50 mx-auto">
                     <div className="mb-3">
-                        <label>Role</label>
-                        <input
-                            value={form.role}
-                            onChange={(e) => {
-                                setForm({ role: e.target.value });
-                            }}
-                            type="text"
-                            className="form-control"
-                            placeholder="Insert Username"
-                            required
-                        />
+                        <div className="form-outline flex-fill mb-0">
+                            <label className="form-label">
+                                Role
+                            </label>
+                            <select
+                                onChange={(e) => {
+                                    setForm({
+                                        ...form,
+                                        role: e.target.value
+                                    });
+                                }}
+                                class="form-select"
+                                aria-label="Default select example">
+                                <option value={form.role} selected>{form.role}</option>
+                                {
+                                    roles.map((role) => {
+                                        return (
+                                            role !== form.role ? <option
+                                                value={role}>
+                                                {role}
+                                            </option> : <></>
+                                        )
+                                    })
+                                }
+                            </select>
+                        </div>
                     </div>
                     <div className="mt-4 text-center">
                         <button

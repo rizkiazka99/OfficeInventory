@@ -93,9 +93,10 @@ const HomePage = () => {
                                                                     EmployeeId: userId,
                                                                     ItemId: id
                                                                 });
+
                                                                 console.log(userId);
                                                                 console.log(id);
-                                                                console.log(borrow)
+                                                                console.log(borrow);
                                                                 borrowHandler(borrow);
                                                             }}
                                                             className="dropdown-item"
