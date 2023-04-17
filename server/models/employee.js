@@ -72,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
     hooks: {
       beforeCreate: (employee, options) => {
         employee.password = encryptPassword(employee.password);
-      }
+      },
     },
     sequelize,
     modelName: 'Employee',

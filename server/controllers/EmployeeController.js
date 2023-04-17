@@ -1,4 +1,4 @@
-const { Employee, Item, EmployeesItem, sequelize } = require('../models');
+const { Employee, Item, Category, EmployeesItem, sequelize } = require('../models');
 const { decryptPassword, encryptPassword } = require('../helpers/bcrypt.js');
 const { generateToken, verifyToken } = require('../helpers/jsonwebtoken.js');
 const { Op } = require("sequelize");
@@ -101,19 +101,6 @@ class EmployeeController {
                 if (isPasswordCorrect) {
                     let access_token = generateToken(account);
                     let verify_token = verifyToken(access_token);
-                    let verify_token_ = verifyToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0cm95bGFuY2FzdGVyMTIzQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoidF9sYW5jYXN0ZXIiLCJpbWFnZV9uYW1lIjpudWxsLCJpbWFnZV90eXBlIjpudWxsLCJpbWFnZV9kYXRhIjpudWxsLCJyb2xlIjoiVUkvVVggRGVzaWduZXIiLCJpYXQiOjE2ODEzODQzMDN9.twjXGOcFjwKrIr4Wca0vtAocD0FKEmscL1I7t-r4ONY');
-                    console.log(verify_token_)
-                    let tempArr = [];
-
-                    tempArr.push(verify_token);
-                    tempArr.map((employee) => {
-                        if (employee.image_data !== null) {
-                            const employee_image = employee.image_data.toString('base64');
-                            employee['image_data'] = employee_image;
-                            return employee;
-                        }
-                    });
-                    verify_token = tempArr[0];
 
                     response.status(200).json({
                         status: true,
@@ -145,7 +132,6 @@ class EmployeeController {
             const id = +request.params.id;
             const idAuth = +request.userData.id;
             let { email, username, password, image_name, image_type, image_data, role } = request.body;
-            const new_password = encryptPassword(password);
             let result;
 
             if (id !== idAuth) {
@@ -154,31 +140,34 @@ class EmployeeController {
                     message: 'You are not the authorized user'
                 });
             } else {
+                let employee = await Employee.findByPk(id);
+                console.log(request.body)
+
                 if(request.file) {
                     image_name = request.file.originalname;
                     image_type = request.file.mimetype;
                     image_data = request.file.buffer;
     
                     result = await Employee.update({
-                        email, 
-                        username, 
-                        password: new_password, 
-                        image_name, 
-                        image_type, 
-                        image_data, 
-                        role
+                        email: email === undefined ? employee.email : email, 
+                        username: username === undefined ? employee.username : username, 
+                        password: password === undefined ? employee.password : encryptPassword(password),
+                        image_name: image_name, 
+                        image_type: image_type,  
+                        image_data: image_data,  
+                        role: role === undefined ? employee.role : role
                     }, {
                         where: {id},
                     });
                 } else {
                     result = await Employee.update({
-                        email, 
-                        username, 
-                        password: new_password, 
-                        image_name: null, 
-                        image_type: null, 
-                        image_data: null, 
-                        role
+                        email: email === undefined ? employee.email : email, 
+                        username: username === undefined ? employee.username : username, 
+                        password: password === undefined ? employee.password : encryptPassword(password),
+                        image_name: employee.image_name, 
+                        image_type: employee.image_type,  
+                        image_data: employee.image_data, 
+                        role: role === undefined ? employee.role : role
                     }, {
                         where: {id},
                     });
@@ -202,7 +191,7 @@ class EmployeeController {
 
     static async delete(request, response) {
         try {
-            const id = +request.userData.id;
+            const id = +request.params.id;
 
             let result;
             let resultJunction;
@@ -212,7 +201,14 @@ class EmployeeController {
                 }
             });
 
+            let itemIds = [];
+            let items = [];
+
             if(employeesItems.length !== 0) {
+                employeesItems.forEach((employeeItem) => {
+                    itemIds.push(employeeItem.ItemId)
+                });
+
                 result = await Employee.destroy({
                     where: {id}
                 });
@@ -223,13 +219,27 @@ class EmployeeController {
                     }
                 });
 
-                console.log(`EmployeesItems with employeeId of ${id} has also been deleted`);
+                for (let i = 0; i < itemIds.length; i++) {
+                    let item = await Item.findByPk(itemIds[i]);
+                    items.push(item);
+
+                    let updateStock = await Item.update({
+                        name: items[i].name,
+                        stock: items[i].stock + 1,
+                        image_name: items[i].image_name,
+                        image_type: items[i].image_type,
+                        image_data: items[i].image_data,
+                        CategoryId: items[i].CategoryId
+                    }, {
+                        where: {
+                            id: itemIds[i]
+                        }
+                    });
+                }
             } else {
                 result = await Employee.destroy({
                     where: {id}
                 });
-
-                console.log(`EmployeesItems with employeeId of ${id} couldn't be found`);
             }
             
             result === 1 ? response.status(200).json({
@@ -355,7 +365,9 @@ class EmployeeController {
                     let id = itemsId[i];
 
                     itemsResult = await Item.findAll({
-                        where: {id}
+                        where: {id},
+                        include: [ Category ]
+                        
                     });
 
                     itemsResult.map((item) => {

@@ -145,6 +145,7 @@ class EmployeeItemController {
                 });
             }
         } catch(err) {
+            console.log(err)
             response.status(500).json({
                 status: false,
                 error: err

@@ -88,21 +88,31 @@ class ItemController {
                 });
             } else {
                 let result;
+                let item = await Item.findByPk(id);
 
                 if (request.file) {
+                    image_name = request.file.originalname,
+                    image_type = request.file.mimetype,
+                    image_data = request.file.buffer
+
                     result = await Item.update({
-                        name, stock, image_name, image_type, image_data, CategoryId
+                        name: name === undefined ? item.name : name, 
+                        stock: stock === undefined ? item.stock : stock, 
+                        image_name, 
+                        image_type, 
+                        image_data, 
+                        CategoryId: CategoryId === undefined ? item.CategoryId : CategoryId
                     }, {
                         where: {id}
                     });
                 } else {
                     result = await Item.update({
-                        name, 
-                        stock, 
-                        image_name: null, 
-                        image_type: null, 
-                        image_data: null, 
-                        CategoryId
+                        name: name === undefined ? item.name : name, 
+                        stock: stock === undefined ? item.stock : stock, 
+                        image_name: item.image_name, 
+                        image_type: item.image_type, 
+                        image_data: item.image_data, 
+                        CategoryId: CategoryId === undefined ? item.CategoryId : CategoryId
                     }, {
                         where: {id}
                     });
@@ -150,7 +160,7 @@ class ItemController {
 
                     resultJunction = await EmployeesItem.destroy({
                         where: {
-                            ItemeId: id
+                            ItemId: id
                         }
                     });
 
